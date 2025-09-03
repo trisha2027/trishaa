@@ -1,0 +1,173 @@
+@model BajajCentra.Models.LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Bajaj Centra Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- background particles -->
+    <span class="particle" style="left:8%; bottom:14%"></span>
+    <span class="particle p2" style="left:22%; bottom:30%"></span>
+    <span class="particle p3" style="left:14%; bottom:60%"></span>
+    <span class="particle" style="right:10%; top:18%"></span>
+    <span class="particle p2" style="right:20%; top:36%"></span>
+    <span class="particle p3" style="right:16%; top:64%"></span>
+    <div class="container">
+        <!-- LEFT -->
+        <section class="left-panel" aria-label="Bajaj Centra introduction">
+            <img class="brand-logo" alt="Bajaj logo"
+                 src="https://cdn.brandfetch.io/idX2TAKcbM/w/400/h/400/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" />
+            <h1>BAJAJ CENTRA</h1>
+            <div class="badge-ribbon"></div>
+            <h2>The center of your workplace</h2>
+            <ul class="features" role="list">
+                <li><span class="tick">✓</span> Secure Access</li>
+                <li><span class="tick">✓</span> Fast Authentication</li>
+                <li><span class="tick">✓</span> Resource Management</li>
+                <li><span class="tick">✓</span> Real-time Monitoring</li>
+                <li><span class="tick">✓</span> User Friendly</li>
+            </ul>
+            <p class="copyright">© Bajaj Finserv 2007–2025. All rights reserved</p>
+        </section>
+        <!-- RIGHT -->
+        <section class="right-panel">
+            <div class="card-wrap">
+                <div class="login-box" role="region" aria-labelledby="welcome">
+                    <p class="muted">Sign in to continue to Bajaj Centra</p>
+                    <p class="error" id="error" role="alert"></p>
+                    <p class="success" id="success" role="status"></p>
+                    <form id="loginForm" autocomplete="off" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div class="field">
+                            <span class="icon">👤</span>
+                            <label class="sr-only" for="username">Username</label>
+                            <input id="username" name="Username" type="text" placeholder="Username" autocomplete="username"
+                                   aria-required="true" />
+                        </div>
+                        <div class="field">
+                            <span class="icon">🔒</span>
+                            <label class="sr-only" for="password">Password</label>
+                            <input id="password" name="Password" type="password" placeholder="Password"
+                                   autocomplete="current-password" aria-required="true" />
+                            <button type="button" class="toggle-pass" aria-label="Show password" id="togglePass">Show</button>
+                        </div>
+                        <div class="row">
+                            <label class="remember">
+                                <input type="checkbox" id="remember" name="RememberMe" />
+                                Remember me
+                            </label>
+                            <a class="link" href="#">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn" id="loginBtn">
+                            Login
+                        </button>
+                        <button type="button" class="btn sso" id="ssoBtn" aria-label="Sign in with Microsoft Azure AD">
+                            <img alt="" src="https://static-00.iconduck.com/assets.00/microsoft-azure-icon-1024x1024-l2j8b4z0.png" />
+                            Sign in with Microsoft Azure AD
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- THIS IS THE ONLY PART THAT IS DIFFERENT FROM YOUR ORIGINAL CODE -->
+    <script>
+        // Utility: ripple effect on buttons
+        function addRipple(e) {
+            const btn = e.currentTarget;
+            if (btn.querySelector('.ripple')) {
+                btn.querySelector('.ripple').remove();
+            }
+            const rect = btn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            ripple.addEventListener('animationend', () => ripple.remove());
+        }
+        const loginBtn = document.getElementById('loginBtn');
+        const ssoBtn = document.getElementById('ssoBtn');
+        [loginBtn, ssoBtn].forEach(b => b.addEventListener('mousedown', addRipple));
+
+        // Password visibility toggle
+        const togglePass = document.getElementById('togglePass');
+        const pwd = document.getElementById('password');
+        togglePass.addEventListener('click', () => {
+            const isPwd = pwd.type === 'password';
+            pwd.type = isPwd ? 'text' : 'password';
+            togglePass.textContent = isPwd ? 'Hide' : 'Show';
+            togglePass.setAttribute('aria-label', isPwd ? 'Hide password' : 'Show password');
+            pwd.focus();
+        });
+
+        // Form submission logic
+        const form = document.getElementById('loginForm');
+        const errorDiv = document.getElementById('error');
+        const successDiv = document.getElementById('success');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            // Get form data
+            const formData = new FormData(form);
+            const token = formData.get('__RequestVerificationToken');
+
+            if (!formData.get('Username') || !formData.get('Password')) {
+                errorDiv.textContent = 'Please enter both username and password.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('@Url.Action("Login", "Account")', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    successDiv.textContent = 'Login successful! Redirecting…';
+                    successDiv.style.display = 'block';
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 600);
+                } else {
+                    errorDiv.textContent = result.message;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                errorDiv.style.display = 'block';
+                console.error('Login request failed:', error);
+            }
+        });
+
+        // Demo SSO click
+        ssoBtn.addEventListener('click', () => {
+            alert('Redirecting to Microsoft Azure AD…');
+            // window.location.href = '/auth/azure';
+        });
+    </script>
+</body>
+</html>
