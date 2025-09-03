@@ -1,0 +1,105 @@
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Bajaj Centra</title>
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container collapsed" id="appContainer">
+        <!-- HEADER -->
+        <header class="top-header">
+            <button class="toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
+            <div class="user-profile">
+                <span class="user-name">@User.Identity?.Name</span>
+                <span class="user-role">@User.FindFirst(ClaimTypes.Role)?.Value</span>
+                <img class="avatar" src="https://i.pravatar.cc/40?u=bajaj-centra" alt="User photo">
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <img class="sidebar-brand-full" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Bajaj_Finserv_Logo_2022.svg" alt="Bajaj Centra Logo" />
+                <img class="sidebar-brand-icon" src="https://cdn.brandfetch.io/idX2TAKcbM/w/400/h/400/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Bajaj Logo Icon" />
+
+            </div>
+            <ul class="main-nav">
+                <li class="nav-item">
+                    <button class="sub-button" id="configBtn" type="button" aria-expanded="false" aria-controls="configSub">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M19.14,12.94a7.43,7.43,0,0,0,.05-1l2-1.55-2-3.46-2.35.95a7.5,7.5,0,0,0-1.73-1L12.94,2H11.06l-1.2,3.84a7.5,7.5,0,0,0-1.73,1L5.78,6.93l-2,3.46,2,1.55a7.43,7.43,0,0,0,0,1L3.78,14.49l2,3.46,2.35-.95a7.5,7.s5,0,0,0,1.73-1l2.35.95,2-3.46Z" /></svg>
+                        <span class="label">Configuration</span>
+                        <svg class="icon arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" /></svg>
+                    </button>
+                    <ul class="submenu" id="configSub">
+                        <li><a class="sublink" href="#">Communication</a></li>
+                        <li><a class="sublink" href="#">AD App</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(ViewData["Title"]?.ToString() == "Overview" ? "active" : "")" asp-controller="Home" asp-action="Index">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10Zm10 8h8V3h-8v18ZM3 21h8v-6H3v6Z"/></svg>
+                        <span class="label">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10l1 4H6l1-4Zm-1 6h12l-1.5 12h-9L6 8Z"/></svg>
+                        <span class="label">Testing</span>
+                    </a>
+                </li>
+                <li class="nav-item logout-item">
+                    <a class="nav-link" href="@Url.Action("Logout", "Account")">
+                        <svg class="icon" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                        <span class="label">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>@ViewData["Title"]</h1>
+                <div class="actions">
+                     <button class="btn light" type="button">Export</button>
+                     <button class="btn" type="button">New Action</button>
+                </div>
+            </header>
+            <div class="content-card">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Sidebar toggle for collapsing
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const appContainer = document.getElementById('appContainer');
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', () => {
+                    appContainer.classList.toggle('collapsed');
+                });
+            }
+
+            // Configuration submenu dropdown
+            const configBtn = document.getElementById('configBtn');
+            const configSub = document.getElementById('configSub');
+            if(configBtn && configSub) {
+                configBtn.addEventListener('click', () => {
+                    const isExpanded = configBtn.getAttribute('aria-expanded') === 'true';
+                    configBtn.setAttribute('aria-expanded', !isExpanded);
+                    configSub.classList.toggle('open');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
