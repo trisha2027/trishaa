@@ -1,0 +1,1 @@
+"SQL_CONNECTION_STRING": "server=tcp:10.128.1.120\\BAFLUAT,50267;uid=portal_user;pwd=P0r+@!_U@t;database=B2C_RCS;Encrypt=false;TrustServerCertificate=True;Connect Timeout=30;Command Timeout=300;Pooling=true;Max Pool Size=200;Min Pool Size=10;Connection Lifetime=300;Application Name=;",
