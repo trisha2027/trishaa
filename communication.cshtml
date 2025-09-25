@@ -1,0 +1,266 @@
+@model BajajCentra.Models.CommunicationViewModel
+@{
+    Layout = null; // This is a partial view.
+}
+
+<!-- The Header is now outside the main container to allow it to be full-width -->
+<div class="full-screen-header">
+    <h1 class="main-title">Whitelisting</h1>
+</div>
+
+<!-- Main Page Content -->
+<div class="page-container fullscreen-view">
+    <div class="card">
+        <div class="card-body">
+            
+            <div id="initial-selection">
+                <div class="intro-section">
+                    <p class="intro-text">For SMS or OTP Whitelisting, click here</p>
+                    <button class="btn-whitelist-main" id="startWhitelistBtn">Click Here</button>
+                </div>
+            </div>
+
+            <!-- Test Results Table -->
+            <div id="testResults" class="test-results" style="width:100%;">
+                <div class="table-header">
+                    <h3>Test Results</h3>
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="tableSearch" placeholder="Search entries...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>SS</th>
+                                <th>SSS</th>
+                                <th class="text-center">HorizontalApi Test</th>
+                                <th class="text-center">UnifiedAPI Test</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be populated here by script after API test -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Modal for Type Selection -->
+<div class="modal-overlay" id="typeSelectionModal" style="display: none;">
+    <div class="modal-box small-modal">
+        <div class="modal-header">
+            <h2>Select Type</h2>
+            <button class="modal-close-btn" id="typeModalCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="select-container">
+                <label class="env-label">Select whitelisting type to proceed</label>
+                <select class="custom-select" id="messageType">
+                    <option value="">Select Type</option>
+                    <option value="sms">SMS</option>
+                    <option value="otp">OTP</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="typeModalCancelBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Original Modal for SMS/OTP Forms (Now with content) -->
+<div class="modal-overlay" id="formModalOverlay" style="display: none;">
+    <div class="modal-box" id="modalBox">
+        <div class="modal-header">
+            <h2 id="modalTitle"></h2>
+            <button class="modal-close-btn" id="formModalCloseBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <!-- SMS Form Content -->
+            <div id="smsForm" class="form-section" style="display: none;">
+                <div class="form-grid">
+                    <div class="form-group"><label>Mobile Number<span class="required">*</span></label><div class="input-group"><span class="input-prefix">+91</span><input type="text" class="form-control required" id="sms-mobile" pattern="[0-9]*" maxlength="10"/></div></div>
+                    <div class="form-group"><label>SUID<span class="required">*</span></label><input type="text" class="form-control required" id="sms-suid"/></div>
+                    <div class="form-group"><label>UID<span class="required">*</span></label><input type="text" class="form-control required" id="sms-uid"/></div>
+                    <div class="form-group"><label>Password<span class="required">*</span></label><input type="password" class="form-control required" id="sms-password"/></div>
+                    <div class="form-group"><label>Template Identifier<span class="required">*</span></label><input type="text" class="form-control required" id="sms-template"/></div>
+                    <div class="form-group"><label>Consent Check Parameter<span class="required">*</span></label><input type="text" class="form-control required" id="sms-consent"/></div>
+                    <div class="form-group full-width"><label>Variables</label><div class="variables-container" id="sms-variables"><div class="variable-row"><div class="variable-inputs"><input type="text" class="form-control" placeholder="Name"/><input type="text" class="form-control" placeholder="Value"/></div><button type="button" class="btn btn-add-variable" onclick="addVariableRow()"><i class="fas fa-plus"></i></button></div></div></div>
+                </div>
+            </div>
+            <!-- OTP Form Content -->
+            <div id="otpForm" class="form-section" style="display: none;">
+                <div class="form-grid">
+                    <div class="form-group"><label>Mobile Number</label><div class="input-group"><span class="input-prefix">+91</span><input type="text" class="form-control" id="otp-mobile" pattern="[0-9]*" maxlength="10"/></div><span class="error-message" id="otp-mobile-error"></span></div>
+                    <div class="form-group"><label>SUID</label><input type="text" class="form-control" id="otp-suid"/></div>
+                    <div class="form-group"><label>UID</label><input type="text" class="form-control" id="otp-uid"/></div>
+                    <div class="form-group"><label>Password</label><input type="password" class="form-control" id="otp-password"/></div>
+                    <div class="form-group"><label>Message Text</label><textarea class="form-control" id="otp-message" rows="3"></textarea></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="formModalCancelBtn">Cancel</button>
+            <button type="button" class="btn btn-primary" id="testApiModalBtn">Test APIs</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* --- Styles are unchanged --- */
+    :root {
+        --brand-blue: #0052cc;
+        --brand-blue-light: #4c9aff;
+        --text-dark: #172b4d;
+        --text-light: #505f79;
+        --border-color: #dfe1e6;
+        --brand-red: #de350b;
+    }
+    .full-screen-header { width: 100%; display: flex; justify-content: center; align-items: center; position: relative; background: linear-gradient(45deg, var(--brand-blue), var(--brand-blue-light)); color: white; padding: 1rem 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .main-title { margin: 0; font-size: 1.5rem; font-weight: 500; }
+    .page-container { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 0; margin: 0; width: 100%; height: calc(100vh - 60px); overflow-y: auto; }
+    .card { background: transparent; border: none; width: 100%; min-height: 100%; }
+    .card-body { padding: 2rem; text-align: center; width: 85%; max-width: 1200px; margin: 0 auto; }
+    .intro-section { padding-bottom: 2rem; }
+    .intro-text { font-size: 1.25rem; color: var(--text-light); margin: 0 auto 2rem auto; font-weight: 400; }
+    .btn-whitelist-main { padding: 1rem 3rem; font-size: 1.1rem; font-weight: 600; border-radius: 8px; border: none; background: var(--brand-blue); color: white; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0, 82, 204, 0.25); }
+    .btn-whitelist-main:hover { transform: translateY(-3px); box-shadow: 0 7px 15px rgba(0, 82, 204, 0.3); }
+    .select-container { margin: 1rem auto 0 auto; max-width: 350px; }
+    .select-container .env-label { display: block; text-align: left; margin-bottom: 0.5rem; color: var(--text-light); }
+    .custom-select { width: 100%; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1em; cursor: pointer; }
+    .test-results .table-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+    .test-results .table-header h3 { font-size: 1.25rem; margin: 0; }
+    .table-responsive { width: 100%; border: 1px solid var(--border-color); border-radius: 8px; overflow-x: auto;}
+    .table { width: 100%; border-collapse: collapse; }
+    .table th { background: #f8f9fa; padding: 0.8rem 1rem; text-align: left; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+    .table td { padding: 0.8rem 1rem; text-align: left; font-size: 0.9rem; border-top: 1px solid var(--border-color); }
+    .table .btn-test-group { display: flex; justify-content: center; gap: 8px; }
+    .btn-test-group button { margin: 0 4px; padding: 0.4rem 1rem; border-radius: 4px; font-size: 0.8rem; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9,30,66,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+    .modal-box { background: white; border-radius: 12px; width: 90%; max-width: 800px; display: flex; flex-direction: column; animation: slide-up 0.3s ease-out; } 
+    .modal-box.small-modal { max-width: 400px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; }
+    .modal-header h2 { font-size: 1.25rem; font-weight: 500; } .modal-close-btn { background: none; border: none; font-size: 1.75rem; cursor: pointer; color: #9aa0a6; }
+    .modal-body { padding: 1.5rem; overflow-y: auto; }
+    .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background-color: #f8f9fa; }
+    .btn-primary, .btn-secondary { border: none; padding: 0.6rem 1.5rem; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
+    .btn-primary { background: var(--brand-blue); color: white; } .btn-secondary { background-color: #e9ecef; color: var(--text-dark); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+    .form-group { text-align: left; } .full-width { grid-column: 1 / -1; }
+    .form-group label { display: block; margin-bottom: 0.3rem; color: var(--text-light); font-size: 0.8rem; }
+    .form-control { width: 100%; box-sizing: border-box; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; }
+    .required { color: var(--brand-red); }
+    .input-group { position: relative; } .input-prefix { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+    .input-group .form-control { padding-left: 40px; }
+    .variables-container .variable-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .variables-container .variable-inputs { display: flex; flex-grow: 1; gap: 0.5rem; }
+    .btn-add-variable, .btn-remove-variable { background: #f1f3f5; border: 1px solid var(--border-color); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+</style>
+
+<!-- *** SCRIPT IS NOW FIXED *** -->
+<script>
+(function() {
+    // --- Get all the elements ---
+    const startWhitelistBtn = document.getElementById('startWhitelistBtn');
+    const tableBody = document.getElementById('tableBody');
+
+    // --- Type Selection Modal Elements ---
+    const typeSelectionModal = document.getElementById('typeSelectionModal');
+    const messageTypeSelect = document.getElementById('messageType');
+    const typeModalCloseBtn = document.getElementById('typeModalCloseBtn');
+    const typeModalCancelBtn = document.getElementById('typeModalCancelBtn');
+
+    // --- Form Modal Elements (Defined once for reliability) ---
+    const formModalOverlay = document.getElementById('formModalOverlay');
+    const modalTitle = formModalOverlay.querySelector('#modalTitle');
+    const modalSmsForm = formModalOverlay.querySelector('#smsForm');
+    const modalOtpForm = formModalOverlay.querySelector('#otpForm');
+    const testApiModalBtn = document.getElementById('testApiModalBtn');
+    const formModalCloseBtn = document.getElementById('formModalCloseBtn');
+    const formModalCancelBtn = document.getElementById('formModalCancelBtn');
+
+    // --- Modal Control Functions ---
+    function openTypeSelectionModal() {
+        typeSelectionModal.style.display = 'flex';
+    }
+
+    function closeTypeSelectionModal() {
+        typeSelectionModal.style.display = 'none';
+        messageTypeSelect.value = ''; // Reset dropdown
+    }
+
+    function openFormModal(type) {
+        // This now uses the correctly-defined variables
+        modalTitle.textContent = type.toUpperCase() + ' Whitelisting';
+        modalSmsForm.style.display = (type === 'sms') ? 'block' : 'none';
+        modalOtpForm.style.display = (type === 'otp') ? 'block' : 'none';
+        
+        // Show the modal
+        formModalOverlay.style.display = 'flex';
+    }
+
+    function closeFormModal() {
+        formModalOverlay.style.display = 'none';
+    }
+
+    // --- Main Button Listeners ---
+    startWhitelistBtn.addEventListener('click', openTypeSelectionModal);
+
+    // --- Type Selection Modal Listeners ---
+    messageTypeSelect.addEventListener('change', function() {
+        if (this.value) {
+            closeTypeSelectionModal();
+            openFormModal(this.value);
+        }
+    });
+
+    typeModalCloseBtn.addEventListener('click', closeTypeSelectionModal);
+    typeModalCancelBtn.addEventListener('click', closeTypeSelectionModal);
+    typeSelectionModal.addEventListener('click', e => (e.target === typeSelectionModal) && closeTypeSelectionModal());
+
+    // --- Form Modal Listeners ---
+    testApiModalBtn.addEventListener('click', function() {
+        closeFormModal();
+        populateTable();
+    });
+
+    formModalCloseBtn.addEventListener('click', closeFormModal);
+    formModalCancelBtn.addEventListener('click', closeFormModal);
+    formModalOverlay.addEventListener('click', e => (e.target === formModalOverlay) && closeFormModal());
+
+    // --- Table Population Function ---
+    function populateTable() {
+        const sampleData = [
+            { ss: "Data 1", sss: "Detail A" },
+            { ss: "Data 2", sss: "Detail B" },
+            { ss: "Data 3", sss: "Detail C" },
+            { ss: "Data 4", sss: "Detail D" }
+        ];
+        tableBody.innerHTML = ''; // Clear previous results
+        sampleData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.ss}</td>
+                <td>${item.sss}</td>
+                <td class="text-center btn-test-group"><button class="btn btn-primary btn-sm">UAT</button><button class="btn btn-success btn-sm">PROD</button></td>
+                <td class="text-center btn-test-group"><button class="btn btn-primary btn-sm">UAT</button><button class="btn btn-success btn-sm">PROD</button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // --- Dynamic variable row function (unchanged) ---
+    window.addVariableRow = function() {
+        const container = document.getElementById('sms-variables');
+        const newRow = document.createElement('div');
+        newRow.className = 'variable-row';
+        newRow.innerHTML = `<div class="variable-inputs"><input type="text" class="form-control" placeholder="Name" /><input type="text" class="form-control" placeholder="Value" /></div><button type="button" class="btn btn-remove-variable"><i class="fas fa-minus"></i></button>`;
+        container.appendChild(newRow);
+        newRow.querySelector('.btn-remove-variable').addEventListener('click', function() { this.closest('.variable-row').remove(); });
+    };
+})();
+</script>
