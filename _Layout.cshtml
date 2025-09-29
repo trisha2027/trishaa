@@ -9,97 +9,155 @@
     <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- ADD FONT AWESOME FOR ICONS IN YOUR COMMUNICATION VIEW -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div class="app-container collapsed" id="appContainer">
-        <!-- HEADER -->
-        <header class="top-header">
-            <button class="toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
-            <div class="user-profile">
-                <span class="user-name">@User.Identity?.Name</span>
-                <span class="user-role">@User.FindFirst(ClaimTypes.Role)?.Value</span>
-                <img class="avatar" src="https://i.pravatar.cc/40?u=bajaj-centra" alt="User photo">
-            </div>
-        </header>
-
         <!-- SIDEBAR -->
-        <aside class="app-sidebar">
-            <div class="sidebar-brand">
-                <img class="sidebar-brand-full" src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Bajaj_Finserv_Logo_2022.svg" alt="Bajaj Centra Logo" />
-                <img class="sidebar-brand-icon" src="https://cdn.brandfetch.io/idX2TAKcbM/w/400/h/400/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Bajaj Logo Icon" />
-
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img class="sidebar-logo" src="https://cdn.brandfetch.io/idX2TAKcbM/w/400/h/400/theme/dark/icon.jpeg?c=1dxbfHSJFAPEGdCLU4o5B" alt="Bajaj Logo Icon" />
+                    <span class="sidebar-brand-text">Bajaj Centra</span>
+                </div>
+                <div class="theme-switcher-container">
+                    <label class="theme-switcher">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
             </div>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <div class="user-details">
+                        <span class="user-name">Trisha Vaidya</span>
+                        <span class="user-email">trisha.vaidya@bajajfinserv.in</span>
+                        <span class="user-role">User</span>
+                    </div>
+                </div>
+                <img class="avatar" src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/643bd640-b5b2-45e1-9eb4-231a2c64d793.png" alt="User photo">
+            </div>
+
             <ul class="main-nav">
+                <!-- Navigation Items -->
                 <li class="nav-item">
-                    <button class="sub-button" id="configBtn" type="button" aria-expanded="false" aria-controls="configSub">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M19.14,12.94a7.43,7.43,0,0,0,.05-1l2-1.55-2-3.46-2.35.95a7.5,7.5,0,0,0-1.73-1L12.94,2H11.06l-1.2,3.84a7.5,7.5,0,0,0-1.73,1L5.78,6.93l-2,3.46,2,1.55a7.43,7.43,0,0,0,0,1L3.78,14.49l2,3.46,2.35-.95a7.5,7.s5,0,0,0,1.73-1l2.35.95,2-3.46Z" /></svg>
+                    <button class="sub-button" id="configBtn" type="button" aria-expanded="false" aria-controls="configSub" title="Configuration">
+                        <svg class="icon" viewBox="0 0 16 16"><path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413-1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"/></svg>
                         <span class="label">Configuration</span>
-                        <svg class="icon arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z" /></svg>
+                        <svg class="icon arrow" viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
                     </button>
                     <ul class="submenu" id="configSub">
-                        <li><a class="sublink" href="#">Communication</a></li>
+                        <!-- MODIFIED THIS LINK -->
+                        <li><a class="sublink" id="communicationLink" href="@Url.Action("Communication", "Home")">Communication</a></li>
                         <li><a class="sublink" href="#">AD App</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(ViewData["Title"]?.ToString() == "Overview" ? "active" : "")" asp-controller="Home" asp-action="Index">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10Zm10 8h8V3h-8v18ZM3 21h8v-6H3v6Z"/></svg>
+                    <a class="nav-link @(ViewData["Title"]?.ToString() == "Dashboard" ? "active" : "")" asp-controller="Home" asp-action="Index" title="Dashboard">
+                        <svg class="icon" viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/></svg>
                         <span class="label">Dashboard</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M7 2h10l1 4H6l1-4Zm-1 6h12l-1.5 12h-9L6 8Z"/></svg>
+                    <a class="nav-link" href="#" title="Testing">
+                         <svg class="icon" viewBox="0 0 16 16"><path d="M8.5 1.5A.5.5 0 0 1 9 2v1.134a.5.5 0 0 1-.421.49L7.125 4.18a.5.5 0 0 1-.25.966l1.375.275a.5.5 0 0 1 .25.966l-1.375.275a.5.5 0 0 1-.25.966l1.458.291a.5.5 0 0 1 .421.49V14a.5.5 0 0 1-1 0V9.866a.5.5 0 0 1 .421-.49l-1.458-.291a.5.5 0 0 1 .25-.966l1.375-.275a.5.5 0 0 1-.25-.966L6.579 6.075a.5.5 0 0 1-.421-.49V2a.5.5 0 0 1 .5-.5h2zM3 3.5A1.5 1.5 0 0 1 4.5 2h5A1.5 1.5 0 0 1 11 3.5v9A1.5 1.5 0 0 1 9.5 14h-5A1.5 1.5 0 0 1 3 12.5v-9zM4 4v8.5a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5V4a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0-.5.5z"/></svg>
                         <span class="label">Testing</span>
                     </a>
                 </li>
+                <!-- Logout Button -->
                 <li class="nav-item logout-item">
-                    <a class="nav-link" href="@Url.Action("Logout", "Account")">
-                        <svg class="icon" viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
-                        <span class="label">Logout</span>
-                    </a>
+                    <form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="nav-link" title="Logout" style="width:100%; border:none; background:none; cursor:pointer;">
+                            <svg class="icon" viewBox="0 0 16 16"><path d="M10 12.5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 1 .5.5zM8.5 8.5a.5.5 0 0 0-1 0v3a.5.5 0 0 0 1 0v-3z"/><path d="M1.88 7.226a.5.5 0 0 1 .22.868l-1.57 1.57a.5.5 0 0 1-.708-.708l1.57-1.57a.5.5 0 0 1 .488-.16zM15.5 1.5A1.5 1.5 0 0 0 14 0H2a1.5 1.5 0 0 0-1.5 1.5v13A1.5 1.5 0 0 0 2 16h12a1.5 1.5 0 0 0 1.5-1.5V1.5zM2 1h12a.5.5 0 0 1 .5.5v13a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-13A.5.5 0 0 1 2 1z"/></svg>
+                            <span class="label">Logout</span>
+                        </button>
+                    </form>
                 </li>
             </ul>
         </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <header class="page-header">
-                <h1>@ViewData["Title"]</h1>
-                <div class="actions">
-                     <button class="btn light" type="button">Export</button>
-                     <button class="btn" type="button">New Action</button>
-                </div>
-            </header>
-            <div class="content-card">
-                @RenderBody()
-            </div>
+        <!-- MAIN CONTENT - ADDED AN ID HERE -->
+        <main class="main-content" id="main-content-container">
+            @RenderBody()
         </main>
     </div>
 
+    <!-- ADD JQUERY SCRIPT -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Sidebar toggle for collapsing
-            const toggleBtn = document.getElementById('sidebarToggle');
             const appContainer = document.getElementById('appContainer');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
-                    appContainer.classList.toggle('collapsed');
+            const appSidebar = document.getElementById('appSidebar');
+            const themeToggle = document.getElementById('themeToggle');
+
+            if (appSidebar) {
+                appSidebar.addEventListener('mouseover', () => {
+                    appContainer.classList.remove('collapsed');
+                });
+                appSidebar.addEventListener('mouseleave', () => {
+                    appContainer.classList.add('collapsed');
                 });
             }
 
-            // Configuration submenu dropdown
             const configBtn = document.getElementById('configBtn');
             const configSub = document.getElementById('configSub');
-            if(configBtn && configSub) {
-                configBtn.addEventListener('click', () => {
+            if (configBtn && configSub) {
+                configBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const isExpanded = configBtn.getAttribute('aria-expanded') === 'true';
                     configBtn.setAttribute('aria-expanded', !isExpanded);
                     configSub.classList.toggle('open');
                 });
             }
+
+            if(themeToggle) {
+                if (localStorage.getItem('theme') === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeToggle.checked = true;
+                }
+
+                themeToggle.addEventListener('change', function() {
+                    if(this.checked) {
+                        document.body.classList.add('dark-mode');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        localStorage.setItem('theme', 'light');
+                    }
+                });
+            }
         });
     </script>
+    
+    <!-- ADDED THIS NEW SCRIPT BLOCK FOR DYNAMIC CONTENT LOADING -->
+    <script>
+        $(document).ready(function() {
+            // Find the communication link by its new ID
+            $('#communicationLink').on('click', function(e) {
+                // Prevent the default link behavior (which is to navigate away)
+                e.preventDefault(); 
+                
+                // Get the URL from the link's href attribute
+                var url = $(this).attr('href');
+                
+                // Use jQuery's .load() function to fetch the content from the URL 
+                // and place it into our main content container.
+                $('#main-content-container').load(url, function(response, status, xhr) {
+                    if (status == "error") {
+                        // If something goes wrong, show an error message.
+                        $('#main-content-container').html("<h2>Error</h2><p>Could not load the page.</p>");
+                    }
+                    // The content from Communication.cshtml is now loaded.
+                    // Any scripts inside Communication.cshtml will execute.
+                });
+            });
+        });
+    </script>
+
 </body>
 </html>
